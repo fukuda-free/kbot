@@ -1,0 +1,60 @@
+version: '4'
+
+environment:
+  RAILS_ENV: development
+
+compose:
+  files:
+    - docker-compose.yml
+
+interaction:
+  # dipはbuildでは使えないようだ
+  # build:
+  #   description: docker-compose build
+  #   service: jets
+  #   command: build
+
+  up:
+    description: docker-compose up app
+    service: app
+    command: up
+
+  rails:
+    description: docker-compose run app bundle exec rails ***
+    service: app
+    command: bundle exec app
+
+  sh:
+    description: docker-compose up app /bin/bash
+    service: app
+    command: /bin/bash
+
+  bundle:
+    description: docker-compose up app bundle exec bundle install
+    service: app
+    command: bundle
+    compose_run_options: [no-deps]
+
+  # rake:
+  #   description: Run rake command
+  #   service: jets
+  #   command: bundle exec rake
+
+  # yarn:
+  #   description: Run yarn command
+  #   service: jets
+  #   command: yarn
+
+  # rspec:
+  #   description: Run Rspec commands
+  #   service: jets
+  #   command: bundle exec rspec
+
+  # rubocop:
+  #   description: Run Rubocop commands
+  #   service: jets
+  #   command: bundle exec rubocop
+
+provision:
+  - dip app clean
+  - dip bundle install

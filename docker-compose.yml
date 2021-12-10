@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # nginx:
+  #   # image: nginx:1.18
+  #   image:  public.ecr.aws/docker/library/nginx:1.21.4
+  #   container_name: nginx
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     # - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #     - ./nginx/default2.conf:/etc/nginx/conf.d/default.conf
+  #     # - ./public:/app/public
+  #     - tmp-data:/kbot/tmp/sockets
+  #   depends_on:
+  #     - app
+
+  app: &app_base
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+      args:
+        RUBY_VERSION: '2.7.5'
+        NODE_VERSION: '14' # 10 , 12 , 14 , 15
+        PROJECT_NAME: 'kbot'
+        DOCCOM_DIR: 'app'
+    # command: foreman start
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    # command: bash -c "rm -f tmp/pids/server.pid && yarn install --check-files && bundle exec rails s"
+    ports:
+      - 3000:3000
+    depends_on:
+      - mysql
+      # - redis
+    volumes:
+      - ./app:/kbot:cached
+      - tmp-data:/kbot/tmp/sockets
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: mysql
+      DATABASE_USER: root
+      DATABASE_PASSWORD: password
+
+  webpacker:
+    <<: *app_base
+    # command: bash -c "yarn install --check-files && ./bin/webpack-dev-server"
+    # command: /bin/sh -c "wait-for-it.sh app:3000 --timeout=600 && bundle install && yarn install --check-files && bin/webpack-dev-server"
+    command: /bin/sh -c "bundle install && yarn install --check-files && bin/webpack-dev-server"
+    environment:
+      NODE_ENV: development
+      RAILS_ENV: development
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+    ports:
+      - "3035:3035"
+    tty: true
+    stdin_open: true
+    depends_on:
+      - app
+
+
+  # redis:
+  #   image: redis
+  #   volumes:
+  #     - redis-data:/data # Redisデータの永続化
+
+  mysql:
+    # image: mysql:5.7
+    image: public.ecr.aws/docker/library/mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      TZ: "Asia/Tokyo"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # ファイルとして残す場合は、下記を利用
+      # # 初期データを投入するSQLが格納されているフォルダ
+      # - ./mysql/mysql_init:/docker-entrypoint-initdb.d
+      # # 永続化するときにマウントするフォルダ
+      # - ./mysql/mysql_data:/var/lib/mysql
+
+
+volumes:
+  mysql-data:
+  tmp-data:
+  redis-data:
+
+
+
