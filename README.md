@@ -3,6 +3,9 @@
 # プロジェクト構築
 docker-compose run app rails new . --force --no-deps --database=mysql --skip-test --webpacker
 
+docker compose run app rails new . --force --no-deps --database=mysql --skip-test --webpacker
+
+
 # config/database.ymlを設定してから次を実行
 ```
 default: &default

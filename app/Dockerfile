@@ -1,10 +1,13 @@
 # Node
 ARG NODE_VERSION 
-FROM node:$NODE_VERSION as node
+# FROM node:$NODE_VERSION as node
+FROM node:17.2.0 as node
 
 # ruby
 ARG RUBY_VERSION
-FROM public.ecr.aws/docker/library/ruby:$RUBY_VERSION
+# FROM public.ecr.aws/docker/library/ruby:$RUBY_VERSION
+FROM ruby:3.0.3
+
 
 # 関係ファイル一式
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
