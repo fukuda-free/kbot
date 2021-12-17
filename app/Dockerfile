@@ -1,29 +1,19 @@
+# Node
+ARG NODE_VERSION 
+FROM node:$NODE_VERSION as node
+
+# ruby
 ARG RUBY_VERSION
-# FROM ruby:$RUBY_VERSION
 FROM public.ecr.aws/docker/library/ruby:$RUBY_VERSION
 
-# RUN gem install foreman
-
-# NodeJS install
-ARG NODE_VERSION
-RUN curl -sL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash -
-
-# yarn install
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-
-# apt-get install
-RUN apt-get update -qq \
-    && apt-get install -y build-essential nodejs yarn vim wget
-
-
-
-
-
-
-
-
-
+# 関係ファイル一式
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /opt/yarn-* /opt/yarn
+RUN ln -fs /opt/yarn/bin/yarn /usr/local/bin/yarn && \
+ apt-get update && \
+ apt-get install -y libpq-dev && \
+ apt-get clean && \
+ rm -rf /var/lib/apt/lists/*
 
 
 # ディレクトリ作成
@@ -33,8 +23,6 @@ RUN mkdir $APP_DIR
 WORKDIR $APP_DIR
 
 # gemfileを複製
-# COPY ./web/Gemfile      $APP_DIR/Gemfile
-# COPY ./web/Gemfile.lock $APP_DIR/Gemfile.lock
 ARG DOCCOM_DIR
 COPY ./$DOCCOM_DIR/Gemfile      $APP_DIR/Gemfile
 COPY ./$DOCCOM_DIR/Gemfile.lock $APP_DIR/Gemfile.lock
