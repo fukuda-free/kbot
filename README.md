@@ -11,8 +11,10 @@ docker compose run app rails new . --force --no-deps --database=mysql --skip-tes
 
 
 
-docker compose run app rails new . --force --no-deps --database=mysql --skip-test -j esbuild --css bootstrap
+docker compose run app rails new . --force --database=mysql --skip-test -j esbuild --css bootstrap
 
+
+Add "scripts": { "build:css": "sass ./app/assets/stylesheets/application.bootstrap.scss ./app/assets/builds/application.css --no-source-map --load-path=node_modules" } to your package.json
 
 
 # config/database.ymlを設定してから次を実行

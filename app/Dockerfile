@@ -35,4 +35,4 @@ COPY ./$DOCCOM_DIR/Gemfile.lock $APP_DIR/Gemfile.lock
 RUN gem install bundler
 # RUN bundle install
 RUN bundle install -j4
-COPY $DOC_DIR $APP_DIR
+COPY ./$DOCCOM_DIR $APP_DIR
