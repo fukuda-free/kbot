@@ -7,6 +7,9 @@ docker compose run app rails new . --force --no-deps --database=mysql --skip-tes
 
 docker compose run app rails new . --force --no-deps --database=mysql --skip-test 
 
+ ocker compose run app rails new . --force --no-deps --database=mysql --skip-test -j esbuild --css bootstrap
+
+
 # config/database.ymlを設定してから次を実行
 ```
 default: &default
