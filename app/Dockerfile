@@ -5,8 +5,8 @@ FROM node:$NODE_VERSION as node
 
 # ruby
 ARG RUBY_VERSION
-# FROM ruby:3.0.3
-FROM ruby:$RUBY_VERSION
+FROM ruby:3.0.3
+# FROM ruby:$RUBY_VERSION
 
 
 # 関係ファイル一式
@@ -14,7 +14,7 @@ COPY --from=node /usr/local/bin/node /usr/local/bin/node
 COPY --from=node /opt/yarn-* /opt/yarn
 RUN ln -fs /opt/yarn/bin/yarn /usr/local/bin/yarn && \
  apt-get update && \
- apt-get install -y libpq-dev && \
+ apt-get install -y libpq-dev vim npm && \
  apt-get clean && \
  rm -rf /var/lib/apt/lists/*
 
