@@ -27,20 +27,23 @@ FROM ruby:3.0.3
 # 2p ---------------------
 # 共通の依存関係
 # パッケージツールをインストール
-RUN apt-get update && apt-get install -y curl apt-transport-https wget
+RUN apt-get update -qq 
 
-# NodeJSをsources listに追加
-RUN curl -sL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash -
 
-# Yarnをsources listに追加
+# install nodejs(LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && apt-get install -y nodejs
+
+# install yarn
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo 'deb http://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    && apt update && apt install -y yarn
 
-RUN apt-get update -y && \
-    apt-get install default-mysql-client nodejs npm -y && \
-    npm uninstall yarn -g && \
-    npm install yarn -g -y
-    
+
+
+
+
+
+
 # ディレクトリ作成
 ARG PROJECT_NAME
 ENV APP_DIR /$PROJECT_NAME
