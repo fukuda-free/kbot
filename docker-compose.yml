@@ -7,7 +7,7 @@ services:
       dockerfile: ./app/Dockerfile
       args:
         RUBY_VERSION: '3.0.3'
-        NODE_VERSION: '17.2.0' # 10 , 12 , 14 , 15
+        NODE_VERSION: '17' # 10 , 12 , 14 , 15
         PROJECT_NAME: 'kbot'
         DOCCOM_DIR: 'app'
     # command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
