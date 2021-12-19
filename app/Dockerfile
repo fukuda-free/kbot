@@ -11,12 +11,18 @@ FROM ruby:3.0.3
 
 # 関係ファイル一式
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/bin/npm /usr/local/bin/npm
 COPY --from=node /opt/yarn-* /opt/yarn
 RUN ln -fs /opt/yarn/bin/yarn /usr/local/bin/yarn && \
  apt-get update && \
  apt-get install -y libpq-dev vim npm && \
  apt-get clean && \
  rm -rf /var/lib/apt/lists/*
+
+# nをインストールしてnode.jsのstableをインストールする
+RUN npm install -g n && n stable
+RUN npm install -g npm@4.0
+RUN npm install -g npm@latest
 
 
 # ディレクトリ作成
